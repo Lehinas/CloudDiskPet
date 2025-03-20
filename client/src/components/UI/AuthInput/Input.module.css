@@ -1,0 +1,46 @@
+
+.input_wrapper {
+    position: relative;
+
+}
+
+.input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 18px;
+    border-bottom: 3px solid #566885;
+    padding: 5px 15px;
+    color: #566885;
+    font-weight: 700;
+    background-color: white;
+}
+
+.togglePassword {
+    width: 24px;
+    height: 24px;
+    background-size: cover;
+    border: none;
+    cursor: pointer;
+    background-color: inherit;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.showPassword {
+    background-image: url('../../../assets/images/show-password.svg');
+}
+
+.hidePassword {
+    background-image: url('../../../assets/images/hide-password.svg');
+}
+
+.error {
+    margin-top: 5px;
+    font-size: 16px;
+    color: red;
+    bottom: -20px;
+    left: 0;
+}

@@ -1,0 +1,28 @@
+.UiPopup{
+    background-color: white;
+    position: absolute;
+    left: 0;
+    top: 110%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    padding: 10px 0;
+}
+.UiPopup_item{
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border: none;
+    width: 100%;
+    background-color: inherit;
+}
+.UiPopup_item:hover{
+    background-color: #edecec;
+}
+.UiPopup_item:active{
+    background-color: #edecec;
+}
+.UiPopup_item:focus{
+    background-color: #edecec;
+}

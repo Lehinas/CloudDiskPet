@@ -1,0 +1,28 @@
+.FileTab{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: none;
+    border-radius: 16px;
+    padding: 5px 10px;
+    white-space: nowrap;
+    cursor: pointer;
+    text-decoration: none;
+}
+.FileTab_active{
+    background-color: rgb(194, 231, 255)    ;
+}
+.FileTab:hover{
+    background-color: #E9E6E6;
+}
+
+.FileTab:active{
+    background-color: #C2E7FF;
+}
+.FileTab:focus{
+    background-color: #C2E7FF;
+}
+
+.FileTab_text{
+    font-size: 15px;
+}

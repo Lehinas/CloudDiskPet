@@ -1,0 +1,161 @@
+.File {
+    padding: 10px 0;
+    border-bottom: solid 2px rgba(120, 116, 116, 0.5);
+    display: grid;
+    grid-template-columns: 1fr 4fr repeat(4, 1fr);
+    align-items: center;
+    cursor: pointer;
+}
+
+.File:hover {
+    background-color: #E9E6E6;
+}
+
+.File_list_file:hover {
+    grid-template-columns: 1fr 4fr repeat(5, 1fr);
+}
+
+.File:hover .File_list_btn {
+    display: block;
+}
+
+.File:hover .File_list_date {
+    grid-column-start: 3;
+}
+
+.File:hover .File_list_size {
+    grid-column-start: 4;
+}
+
+.File_list_img {
+    grid-column-start: 1;
+    justify-self: center;
+    width: 32px;
+    height: 32px;
+}
+
+.File_list_name {
+    grid-column-start: 2;
+}
+
+
+.File_list_date {
+    grid-column-start: 5;
+    justify-self: center;
+    white-space: nowrap;
+}
+
+.File_list_size {
+    grid-column-start: 6;
+    justify-self: center;
+}
+
+.File_list_btn {
+    display: none;
+    width: fit-content;
+    justify-self: center;
+    padding: 5px 15px !important;
+    transition: all 0.3s ease;
+}
+
+
+.File_list_btn:hover {
+    border-color: #566885;
+    background-color: #f0f8ff;
+}
+
+.File_list_btn:active {
+    background-color: #566885;
+    border-color: #0056b3;
+}
+
+.File_list_btn:hover img {
+    transform: scale(1.1);
+}
+
+.File_list_btn:active img {
+    transform: scale(0.95);
+}
+
+.File_plate {
+    display: flex;
+    flex-direction: column;
+    width: 100px;
+    position: relative;
+    gap: 5px;
+}
+
+.File_plate_img {
+    width: 100px;
+    height: 100px;
+}
+
+.File_plate_name {
+    font-size: 18px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: center;
+}
+
+.File_plate_info_card {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    z-index: 10;
+}
+
+.File_plate:hover .File_plate_info_card {
+    display: block;
+}
+
+
+.File_plate_info_name,
+.File_plate_info_time,
+.File_plate_info_size {
+    font-size: 17px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.File_plate_info_buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.File_plate_info_btn {
+    padding: 5px 15px !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.File_plate_info_btn:hover {
+    border-color: #4B9CD3;
+    background-color: #4B9CD3;
+}
+
+.File_plate_info_btn:active {
+    background-color: #4B9CD3;
+    border-color: #007BFF;
+}
+
+.File_plate_info_btn:hover img {
+    transform: scale(1.1);
+}
+
+.File_plate_info_btn:active img {
+    transform: scale(0.95);
+}
+
+.selected {
+    background-color: #C2E7FF;
+}
+.selected:hover {
+    background-color: #C2E7FF;
+}

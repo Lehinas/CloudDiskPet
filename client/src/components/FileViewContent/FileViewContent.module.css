@@ -1,0 +1,16 @@
+
+.FileViewContent_img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+
+.FileViewContent_default {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #e5bcbc;
+    border-radius: 8px;
+    align-self: center;
+}

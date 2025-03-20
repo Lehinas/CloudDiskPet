@@ -1,0 +1,36 @@
+.uploader {
+    height: 300px;
+    width: 300px;
+    position: fixed;
+    background-color: #566885;
+    bottom: 1%;
+    right: 1%;
+    padding: 20px;
+    border-radius: 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.uploader_header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.uploader_title {
+    color: #E9E6E6;
+    font-size: 1.2rem;
+}
+
+.uploader_close {
+    position: absolute;
+    right: 3%;
+    top: 3%;
+    background-color: inherit;
+    border: none;
+}
+.uploader_close_img {
+    width: 36px;
+
+}

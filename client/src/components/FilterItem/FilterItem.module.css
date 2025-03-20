@@ -1,0 +1,70 @@
+.FilterItem {
+    width: fit-content;
+    cursor: pointer;
+    position: relative;
+    background-color: inherit;
+    display: flex;
+    gap: 3px;
+}
+
+
+.FilterItem_btn {
+    border: 1px solid #1F1F1F;
+    border-radius: 8px;
+    padding: 5px 10px 5px 15px;
+    color: rgb(68, 71, 70);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 400;
+    background-color: inherit;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.FilterItem_btn_active{
+    background-color: rgb(194, 231, 255);
+    border: none;
+    border-radius: 8px 0 0 8px;
+}
+
+.FilterItem_btn:hover {
+    background-color: #edecec;
+}
+
+.FilterItem_btn:active {
+    background-color: #edecec;
+}
+
+.FilterItem_btn_active:hover{
+    background-color: #B3D7EF;
+}
+
+.FilterItem_img {
+    stroke: green;
+    color: green;
+    fill: green;
+}
+
+.FilterItem_clean{
+    border: none;
+    background-color: inherit;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+}
+
+.FilterItem_clean_active{
+    background-color: rgb(194, 231, 255);
+    border: none;
+    border-radius: 0 8px 8px 0;
+}
+.FilterItem_clean_active:hover{
+    background-color: #B3D7EF;
+}
+
+.FilterItem_clean img{
+    width: 16px;
+}
+

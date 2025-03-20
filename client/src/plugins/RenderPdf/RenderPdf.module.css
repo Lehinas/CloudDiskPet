@@ -1,0 +1,10 @@
+.RenderPdf_pdf{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: fit-content;
+}
+
+.RenderPdf_page {
+
+}

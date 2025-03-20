@@ -1,0 +1,8 @@
+.RenderText {
+    display: block;
+    width: 100%;
+}
+
+.RenderText_content{
+    background-color: white;
+}

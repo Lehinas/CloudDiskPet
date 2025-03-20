@@ -1,0 +1,48 @@
+.navbar {
+    display: flex;
+    padding: 8px 50px 8px 20px;
+    color: #566885 !important;
+    font-weight: 700;
+    justify-content: space-between;
+    font-size: 20px;
+}
+
+.navbar_logo {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.navbar_logo_img {
+    width: 36px;
+}
+
+.navbar_title {
+    color: #566885;
+    text-decoration: none;
+}
+
+.navbar_auth {
+    display: flex;
+    gap: 27px;
+    align-items: center;
+}
+
+.navbar_login, .navbar_reg {
+    text-decoration: none;
+    color: #566885;
+}
+
+.navbar_user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.navbar_user img {
+    width: 36px;
+}
+.navbar_username {
+    text-decoration: none;
+    color: #566885;
+    font-size: 22px;
+}

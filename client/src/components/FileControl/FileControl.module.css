@@ -1,0 +1,102 @@
+.FileControl {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.FileControl_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+}
+
+.FileControl_path {
+    display: flex;
+    flex-grow: 1;
+}
+
+.FileControl_view {
+    display: flex;
+    gap: 5px;
+}
+
+.FileControl_view_btn {
+    border: none;
+    line-height: 0;
+    background-color: rgb(233, 238, 246);
+    padding: 5px;
+    border-radius: 4px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.FileControl_view_btn:hover {
+    background-color: #e0e0e0;
+    box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.15);
+    transform: scale(1.05);
+}
+
+.FileControl_view_btn img {
+    width: 25px;
+    transition: transform 0.3s ease;
+}
+
+.FileControl_view_btn:hover img {
+    transform: scale(1.1);
+}
+
+.FileControl_view_popup_wrapper {
+    position: relative;
+}
+
+.FileControl_view_popup {
+    background-color: white;
+    position: absolute;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    padding: 10px 0;
+    top: 110%;
+}
+
+.FileControl_view_popup_item {
+    white-space: nowrap;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border: none;
+    width: 100%;
+    background-color: inherit;
+    cursor: pointer;
+}
+
+.FileControl_view_popup_item:hover {
+    background-color: #E9E6E6;
+}
+
+.FileControl_view_popup_item:active {
+    background-color: #E9E6E6;
+}
+
+.FileControl_view_popup_item:focus {
+    background-color: #E9E6E6;
+}
+
+.FileControl_view_popup_btn {
+    white-space: nowrap;
+    width: 100%;
+    border: none;
+    background-color: rgb(233, 238, 246);
+    padding: 5px 10px;
+    border-radius: 4px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+}
+
+.FileControl_view_popup_btn:hover {
+    background-color: #e0e0e0;
+}

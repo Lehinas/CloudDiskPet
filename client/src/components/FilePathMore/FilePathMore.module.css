@@ -1,0 +1,28 @@
+.FilePathMore {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.FilePathMore_btn {
+    height: fit-content;
+    border: none;
+    padding: 6px;
+    border-radius: 50%;
+    background-color: inherit;
+    display: flex;
+    align-items: center;
+}
+
+.FilePathMore_btn:hover {
+    background-color: #E9E6E6;
+}
+
+.FilePathMore_btn img {
+    width: 24px;
+    height: auto;
+}
+
+.FilePathMore_chevron {
+    width: 24px;
+}

@@ -1,0 +1,11 @@
+.a {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 18px;
+    border-bottom: 3px solid #566885;
+    padding: 5px 15px;
+    color: #566885;
+    font-weight: 300;
+    background-color: white;
+}

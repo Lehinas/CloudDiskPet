@@ -1,0 +1,24 @@
+.UploadPopupItem{
+    border-bottom: 1px solid rgba(120, 116, 116, 0.5);
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+}
+.UploadPopupItem_tab{
+    background-color: inherit;
+    border: none;
+    display: flex;
+    padding: 10px 10px;
+    gap: 10px;
+    align-items: center;
+    font-size: 16px;
+}
+.UploadPopupItem_tab:hover{
+    background-color: #edecec;
+}
+.UploadPopupItem_tab:active{
+    background-color: #edecec;
+}
+.UploadPopupItem_tab:focus{
+    background-color: #edecec;
+}
