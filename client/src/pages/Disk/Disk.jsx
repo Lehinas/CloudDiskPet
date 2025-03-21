@@ -10,7 +10,6 @@ const Disk = () => {
     
     useFetchFiles()
     const { dragEnter, dragEnterHandler, dragOverHandler, dragLeaveHandler, dropHandler } = useDragAndDrop()
-    const currentFolder = useSelector(state => state.files.currentFolder)
     
     return (
         !dragEnter ?

@@ -1,8 +1,7 @@
 import axios from "axios";
 import AuthService from "../services/AuthService"
 
-export const API_URL = process.env.API_URL
-
+export const API_URL = process.env.REACT_APP_API_URL
 export const api = axios.create({
     withCredentials: true,
     baseURL: API_URL
