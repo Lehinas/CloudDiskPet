@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import styles from "./Search.module.css"
 import { useDispatch, useSelector } from "react-redux"
-import { pushToFolderStack, setCurrentDir, setCurrentFolder, setFiles, setFolderStack } from "../../store/fileSlice"
+import { setCurrentDir, setCurrentFolder, setFiles, setFolderStack } from "../../store/fileSlice"
 import FileService from "../../services/FileService"
 
 import cross from "../../assets/images/cross.svg"
@@ -49,7 +49,7 @@ const Search = () => {
         }
     }
     const searchNameClickHandler = async (e) => {
-        if(searchName !== ""){
+        if (searchName !== "") {
             await searchHandler(e, searchName)
         }
     }
@@ -58,18 +58,23 @@ const Search = () => {
         dispatch(setFiles(data))
         setSearchName("")
     }
-    const handleClick = async (e,item) => {
+    const handleClick = async (e, item) => {
         const { data } = await FileService.getFileInfo(item)
-        const arr = data.slice(0, -1)
-        const last = arr.pop()
-        dispatch(setFolderStack(arr))
+        
+        const isFile = data[data.length - 1].type
+        const folderStack = isFile ? data.slice(0, -1) : data
+        const last = folderStack[folderStack.length - 1]
+        
+        dispatch(setFolderStack(folderStack))
         dispatch(setCurrentFolder(last.name))
         dispatch(setCurrentDir(last.id))
+        
         togglePopup(e)
         setSearchName("")
     }
+    
     const layout = (item) => {
-        const {path} = item
+        const { path } = item
         const renderPath = `Мой Диск\\${path}\\`
         
         return (
@@ -89,7 +94,13 @@ const Search = () => {
                 placeholder={"Поиск файла"}
             />
             {searchName && <button onClick={clearInput} className={styles.search_btn}><img src={cross} /></button>}
-            {isOpen && <UiPopup items={foundFiles} clickHandler={handleClick} ref={popupRef} layout={layout} parentStyles={styles} />}
+            {isOpen && <UiPopup
+                items={foundFiles}
+                clickHandler={handleClick}
+                ref={popupRef}
+                layout={layout}
+                parentStyles={styles}
+            />}
         </div>
     )
 }

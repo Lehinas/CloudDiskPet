@@ -55,7 +55,7 @@ const FilePath = ({ item, last, currentId, folderName, clickHandler }) => {
             {isOpen && (
                 <div ref={popupRef} className={styles.FilePath_popup}>
                     {tabs.map((tab, index) => (
-                        <UploadPopupItem key={index} items={tab} helper={helper}/>
+                        <UploadPopupItem key={index} items={tab} helper={helper} />
                         // костыли
                     ))}
                 </div>

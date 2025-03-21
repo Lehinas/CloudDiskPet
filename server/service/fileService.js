@@ -179,7 +179,7 @@ class FileService {
                     const parentId = fileInfo[fileInfo.length - 1].id
                     let res = await fileModel.findOne({ name: path, parent: parentId })
                     if (res) {
-                        fileInfo.push({ name: res.name, id: res._id })
+                        fileInfo.push({ name: res.name, id: res._id, type: res.extension })
                     }
                 }
             } catch (e) {
