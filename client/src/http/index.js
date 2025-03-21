@@ -1,7 +1,7 @@
 import axios from "axios";
 import AuthService from "../services/AuthService"
 
-export const API_URL = "http://localhost:5000"
+export const API_URL = process.env.API_URL
 
 export const api = axios.create({
     withCredentials: true,
