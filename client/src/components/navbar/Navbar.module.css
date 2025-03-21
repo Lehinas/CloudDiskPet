@@ -38,11 +38,28 @@
     align-items: center;
     gap: 10px;
 }
+
 .navbar_user img {
     width: 36px;
 }
+
 .navbar_username {
     text-decoration: none;
     color: #566885;
     font-size: 22px;
+}
+
+.navbar_logout {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    padding: 5px 10px;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar_logout:hover {
+    background-color: #f0f0f0;
 }
