@@ -20,7 +20,6 @@ function App () {
             navigate("/disk")
         } catch (e) {
             if (e.response && (e.response.status === 400 || e.response.status === 401)) {
-                console.log("problem")
                 if (location.pathname !== "/login" && location.pathname !== "/registration") {
                     navigate("/login")
                 }
