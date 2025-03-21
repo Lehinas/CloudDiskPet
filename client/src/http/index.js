@@ -4,7 +4,8 @@ import AuthService from "../services/AuthService"
 export const API_URL = process.env.REACT_APP_API_URL
 export const api = axios.create({
     withCredentials: true,
-    baseURL: API_URL
+    baseURL: "https://clouddiskpet-production.up.railway.app"
+    // baseURL: API_URL
 })
 
 api.interceptors.request.use((config) => {
