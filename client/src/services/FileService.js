@@ -36,11 +36,12 @@ export default class FileService {
         })
     }
     
-    static async downloadFile (userId, fileId) {
+    static async downloadFile (userId, fileId, type) {
         return api.get("api/files/download", {
             params: {
-                userId: userId,
-                fileId: fileId,
+                userId,
+                fileId,
+                type
             },
             responseType: "blob",
         })

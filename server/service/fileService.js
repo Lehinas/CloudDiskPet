@@ -6,6 +6,7 @@ const { FileError } = require("../exceptions/fileError")
 const { deleteLocalFile, deleteLocalFolder } = require("../utils/deleteContent")
 const { createPath } = require("../utils/createPath")
 const path = require("path")
+const { archiveDirectory } = require("../utils/archiveDirectory")
 
 class FileService {
     async createDir (user, name, type, parent) {
@@ -117,6 +118,26 @@ class FileService {
             return path
         }
         throw new FileError.FileNotFoundError()
+    }
+    
+    async downloadDirectory (userId, fileId) {
+        if (!userId || !fileId) {
+            throw new FileError.InvalidFileRequest("Отсутствуют id user или file")
+        }
+        const file = await fileModel.findOne({ user: userId, _id: fileId })
+        if (!file) {
+            throw new FileError.FileNotFoundError()
+        }
+        const directoryPath = path.join(process.env.FILES_DIR_PATH, userId, file.path)
+        if (!fs.existsSync(directoryPath)) {
+            throw new FileError.FileNotFoundError()
+        }
+        const zipFileName = `tmp_${fileId}.zip`
+        const zipFilePath = path.join(process.env.FILES_DIR_PATH, userId, zipFileName);
+        
+        await archiveDirectory(directoryPath, zipFilePath)
+        
+        return zipFilePath
     }
     
     async deleteFiles (userId, fileId) {

@@ -1,5 +1,5 @@
-const { fileModel } = require("../entities/fileModel")
 const { fileService } = require("../service/fileService")
+const fs = require("fs")
 
 class FileController {
     async createDir (req, res, next) {
@@ -39,9 +39,26 @@ class FileController {
     
     async downloadFile (req, res, next) {
         try {
-            const { userId, fileId } = req.query
-            const path = await fileService.downloadFile(userId, fileId)
-            res.download(path)
+            const { userId, fileId, type } = req.query
+            
+            if (type !== "dir") {
+                const filePath = await fileService.downloadFile(userId, fileId)
+                return res.download(filePath)
+            }
+            
+            const zipFilePath = await fileService.downloadDirectory(userId, fileId)
+            
+            res.download(zipFilePath, (err) => {
+                if (!err) {
+                    fs.unlink(zipFilePath, (unlinkErr) => {
+                        if (unlinkErr) {
+                            console.error("Ошибка при удалении архива:", unlinkErr)
+                        }
+                    })
+                } else {
+                    console.error("Ошибка при скачивании архива:", err)
+                }
+            })
         } catch (e) {
             next(e)
         }
@@ -80,10 +97,10 @@ class FileController {
     
     async getFileInfo (req, res, next) {
         try {
-            const {file} = req.query
+            const { file } = req.query
             const fileInfo = await fileService.getFileInfo(file)
             res.json(fileInfo)
-        } catch (e){
+        } catch (e) {
             next(e)
         }
     }

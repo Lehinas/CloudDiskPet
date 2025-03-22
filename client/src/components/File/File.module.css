@@ -10,9 +10,6 @@
 
 .File:hover {
     background-color: #E9E6E6;
-}
-
-.File_list_file:hover {
     grid-template-columns: 1fr 4fr repeat(5, 1fr);
 }
 

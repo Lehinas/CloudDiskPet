@@ -52,7 +52,7 @@ const File = ({ file, isSelected }) => {
         <>
             {fileView === "list" ? (
                 <div
-                    className={`${styles.File} ${type !== "dir" && styles.File_list_file} ${isSelected && styles.selected}`}
+                    className={`${styles.File} ${isSelected && styles.selected}`}
                     data-file-id={fileId}
                     onClick={openDirHandler}
                 >
@@ -60,12 +60,7 @@ const File = ({ file, isSelected }) => {
                     <div className={styles.File_list_name}>{name}</div>
                     <div className={styles.File_list_date}>{date.slice(0, 10)}</div>
                     <div className={styles.File_list_size}>{sizeFormat(size)}</div>
-                    {type !== "dir" && (
-                        <Button
-                            className={styles.File_list_btn}
-                            onClick={downloadHandler}
-                        ><img src={downloadLogo} /></Button>
-                    )}
+                    <Button className={styles.File_list_btn} onClick={downloadHandler}><img src={downloadLogo} /></Button>
                     <Button className={styles.File_list_btn} onClick={shareHandler}><img src={shareLogo} /></Button>
                     <Button className={styles.File_list_btn} onClick={deleteHandler}><img src={deleteLogo} /></Button>
                 </div>
