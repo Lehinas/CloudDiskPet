@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom"
 import React from "react"
 import Login from "../../components/AuthLoginReg/Login"
 import Registration from "../../components/AuthLoginReg/Registration"
+import { addError } from "../../store/clientSlice"
 
 const Auth = ({ type }) => {
     const dispatch = useDispatch()
@@ -22,34 +23,16 @@ const Auth = ({ type }) => {
         clearErrors,
     } = useAuthForm()
     
-    const onSubmit = async ({
-        username,
-        email,
-        password,
-    }) => {
-        switch (type) {
-            case "reg":
-                try {
-                    const response = await AuthService.registration(email, username, password)
-                    localStorage.setItem("token", response.data.tokens.accessToken)
-                    dispatch(setUser(response.data.user))
-                } catch (e) {
-                    console.log(e)
-                } finally {
-                    break
-                }
-            case "login":
-                try {
-                    const response = await AuthService.login(email, password)
-                    localStorage.setItem("token", response.data.tokens.accessToken)
-                    dispatch(setUser(response.data.user))
-                } catch (e) {
-                    console.log(e)
-                } finally {
-                    break
-                }
+    const onSubmit = async ({ username, email, password }) => {
+        try {
+            const response = type === "reg" ?
+                await AuthService.registration(email, username, password) :
+                await AuthService.login(email, password)
+            localStorage.setItem("token", response.data.tokens.accessToken)
+            dispatch(setUser(response.data.user))
+            navigate("/disk")
+        } catch (e) {
         }
-        navigate("/disk")
     }
     
     const cleanForm = () => {

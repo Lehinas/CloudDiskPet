@@ -69,10 +69,20 @@
     cursor: pointer;
 }
 
+.noFilesPlate{
+    justify-content: center;
+}
+
 .SelectionBox{
     position: absolute;
     background-color: rgba(0, 123, 255, 0.2);
     border: 1px dashed #007bff;
     pointer-events: none;
     z-index: 10;
+}
+.noFilesText {
+    font-size: 18px;
+    color: #888;
+    text-align: center;
+    padding-top: 50px;
 }

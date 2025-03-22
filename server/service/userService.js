@@ -16,7 +16,7 @@ class UserService {
         }
         const hashPassword = bcrypt.hashSync(password, 7)
         const activationId = uuid.v4()
-        const activationLink = `http://localhost:${process.env.SERVER_PORT}/api/auth/activate/${activationId}`
+        const activationLink = `${process.env.SERVER_BASE_URL}:${process.env.SERVER_PORT}/api/auth/activate/${activationId}`
         const user = new userModel({ username, email, password: hashPassword, activationLink: activationId })
         
         await mailService.sendActivationMail(email, activationLink)

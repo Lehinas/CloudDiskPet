@@ -5,17 +5,14 @@ import File from "../File/File"
 import { changeSortName } from "../../store/fileSlice"
 
 const FileList = () => {
-    
     const dispatch = useDispatch()
     const containerRef = useRef(null)
-    
     const files = useSelector(state => state.files.files)
     const fileView = useSelector(state => state.files.fileView)
     const [selectionBox, setSelectionBox] = useState(null)
     const [selectedFiles, setSelectedFiles] = useState([])
-    useEffect(() => {
     
-    }, [fileView])
+    useEffect(() => {}, [fileView])
     
     const changeSort = (value) => {
         dispatch(changeSortName(value))
@@ -33,13 +30,12 @@ const FileList = () => {
             endX: e.clientX - rect.left + scrollLeft,
             endY: e.clientY - rect.top + scrollTop,
         })
-        
     }
     
     const handleMouseMove = (e) => {
         if (!selectionBox) return
         
-        const rect = containerRef.current.getBoundingClientRect() // Контейнер
+        const rect = containerRef.current.getBoundingClientRect()
         const scrollLeft = containerRef.current.scrollLeft
         const scrollTop = containerRef.current.scrollTop
         
@@ -89,45 +85,54 @@ const FileList = () => {
     const handleMouseUp = (e) => {
         setSelectionBox(null)
     }
+    
     return (
         <>
-            {
-                fileView === "list" ?
-                    <div
-                        className={styles.FileList}
-                        ref={containerRef}
-                        // onMouseDown={handleMouseDown}
-                        // onMouseUp={handleMouseUp}
-                        // onMouseMove={handleMouseMove}
-                    >
-                        <div className={styles.FileList_header} onMouseDown={e => e.stopPropagation()}>
-                            <div className={styles.FileList_name} onClick={() => changeSort("name")}>Название</div>
-                            <div className={styles.FileList_date} onClick={() => changeSort("date")}>Дата</div>
-                            <div className={styles.FileList_size} onClick={() => changeSort("size")}>Размер</div>
-                        </div>
-                        {files.length >= 1 && files.map(file => <File
-                            key={file._id}
-                            file={file}
-                            isSelected={selectedFiles.includes(file._id)}
-                        />)}
-                        {selectionBox && (
-                            <div
-                                className={styles.SelectionBox}
-                                style={{
-                                    left: Math.min(selectionBox.startX, selectionBox.endX),
-                                    top: Math.min(selectionBox.startY, selectionBox.endY),
-                                    width: Math.abs(selectionBox.endX - selectionBox.startX),
-                                    height: Math.abs(selectionBox.endY - selectionBox.startY),
-                                }}
+            {fileView === "list" ? (
+                <div
+                    className={styles.FileList}
+                    ref={containerRef}
+                    // onMouseDown={handleMouseDown}
+                    // onMouseUp={handleMouseUp}
+                    // onMouseMove={handleMouseMove}
+                >
+                    <div className={styles.FileList_header} onMouseDown={e => e.stopPropagation()}>
+                        <div className={styles.FileList_name} onClick={() => changeSort("name")}>Название</div>
+                        <div className={styles.FileList_date} onClick={() => changeSort("date")}>Дата</div>
+                        <div className={styles.FileList_size} onClick={() => changeSort("size")}>Размер</div>
+                    </div>
+                    {files.length ? (
+                        files.map(file => (
+                            <File
+                                key={file._id}
+                                file={file}
+                                isSelected={selectedFiles.includes(file._id)}
                             />
-                        )}
-                    </div>
-                    :
-                    <div className={styles.FilePlate}>
-                        {files.length >= 1 && files.map(file => <File key={file._id} file={file} />)}
-                    </div>
-            }
-        
+                        ))
+                    ) : (
+                        <div className={styles.noFilesText}>Добавьте сюда файлы</div>
+                    )}
+                    {selectionBox && (
+                        <div
+                            className={styles.SelectionBox}
+                            style={{
+                                left: Math.min(selectionBox.startX, selectionBox.endX),
+                                top: Math.min(selectionBox.startY, selectionBox.endY),
+                                width: Math.abs(selectionBox.endX - selectionBox.startX),
+                                height: Math.abs(selectionBox.endY - selectionBox.startY),
+                            }}
+                        />
+                    )}
+                </div>
+            ) : (
+                <div className={`${styles.FilePlate} ${files.length === 0 ? styles.noFilesPlate : ""}`}>
+                    {files.length >= 1 ? (
+                        files.map(file => <File key={file._id} file={file} />)
+                    ) : (
+                        <div className={styles.noFilesText}>Добавьте сюда файлы</div>
+                    )}
+                </div>
+            )}
         </>
     )
 }
