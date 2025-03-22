@@ -20,7 +20,7 @@ export const useAuthForm = () => {
     })
     
     return useForm({
-        mode: 'onChange',
+        mode: 'onBlur',
         resolver: zodResolver(authSchema),
     })
 }

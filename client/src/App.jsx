@@ -6,6 +6,7 @@ import { useEffect } from "react"
 import AuthService from "./services/AuthService"
 import { setUser } from "./store/userSlice"
 import FileNavigation from "./components/FileNavigation/FileNavigation"
+import ErrorModal from "./components/ErrorModal/ErrorModal"
 
 function App () {
     const isAuth = useSelector(state => state.user.isAuth)
@@ -43,12 +44,14 @@ function App () {
                         <Outlet />
                     </div>
                 </div>
+                <ErrorModal />
             </div>
         )
     } else {
         return (
             <div className="App">
                 <Outlet />
+                <ErrorModal />
             </div>
         )
         

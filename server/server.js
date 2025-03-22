@@ -19,7 +19,7 @@ app.use(fileUpload({
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: "https://cloud-disk-pet.vercel.app",
+    origin: ["https://cloud-disk-pet.vercel.app", "http://localhost:3000"],
     credentials: true,
 }))
 

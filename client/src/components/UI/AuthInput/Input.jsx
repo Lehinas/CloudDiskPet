@@ -1,23 +1,27 @@
-import React, { useState } from "react"
+import React from "react"
 import styles from "./Input.module.css"
+import { useDispatch, useSelector } from "react-redux"
+import { toggleShowPass } from "../../../store/clientSlice"
 
 const AuthInput = ({ type, placeholder, register, errors }) => {
-    const [showPass, setShowPass] = useState(false)
+    const dispatch = useDispatch()
+    const showPassword = useSelector(state => state.user.showPassword)
+    
     return (
         <div>
             <div className={styles.input_wrapper}>
                 <input
-                    type={showPass === true ? "text" : (type === "confirmPassword" ? "password" : type)}
+                    type={showPassword === true ? "text" : (type === "confirmPassword" ? "password" : type)}
                     className={styles.input}
                     {...register(type)}
                     placeholder={placeholder}
                 />
                 {type === "password" && <button
                     type={type}
-                    className={`${styles.togglePassword} ${showPass
+                    className={`${styles.togglePassword} ${showPassword
                         ? styles.showPassword
                         : styles.hidePassword}`}
-                    onClick={() => setShowPass(!showPass)}
+                    onClick={() => dispatch(toggleShowPass())}
                 >
                 </button>}
             </div>

@@ -13,8 +13,6 @@ import useFileActions from "../../hooks/useFileActions"
 import { createPortal } from "react-dom"
 
 const FileView = ({ viewData, setViewOpen, Logo, file }) => {
-    
-    
     const { data, extension } = viewData
     const { name } = file
     
@@ -45,6 +43,16 @@ const FileView = ({ viewData, setViewOpen, Logo, file }) => {
         }
     }, [scrolled])
     
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape") {
+                setViewOpen(false)
+            }
+        }
+        window.addEventListener("keydown", handleKeyDown)
+        return () => window.removeEventListener("keydown", handleKeyDown)
+    }, [setViewOpen])
+    
     return createPortal(
         <div className={styles.FileView_popup}>
             <div
@@ -64,17 +72,22 @@ const FileView = ({ viewData, setViewOpen, Logo, file }) => {
                     <button className={styles.FileView_popup_navbar_about_name}>{name}</button>
                 </div>
                 <div className={styles.FileView_popup_navbar_btns}>
-                    <button className={styles.FileView_popup_navbar_btn} onClick={downloadHandler}><DownloadLogo />
+                    <button className={styles.FileView_popup_navbar_btn} onClick={downloadHandler}>
+                        <DownloadLogo />
                     </button>
-                    <button className={styles.FileView_popup_navbar_btn} onClick={deleteHandler}><DeleteLogo /></button>
-                    <button className={styles.FileView_popup_navbar_btn} onClick={shareHandler}><ShareLogo /></button>
+                    <button className={styles.FileView_popup_navbar_btn} onClick={deleteHandler}>
+                        <DeleteLogo />
+                    </button>
+                    <button className={styles.FileView_popup_navbar_btn} onClick={shareHandler}>
+                        <ShareLogo />
+                    </button>
                 </div>
             </div>
             <div className={styles.FileView_content} ref={contentRef}>
                 <FileViewContent data={data} extension={extension} />
             </div>
         </div>,
-        document.body
+        document.body,
     )
 }
 

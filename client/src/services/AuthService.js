@@ -8,7 +8,9 @@ export default class AuthService {
         return api.post("api/auth/registration",{email, username, password})
     }
     static async checkAuth(){
-        return api.get("api/auth/refresh")
+        return api.get("api/auth/refresh", { _skipErrorModal: true })
     }
-    
+    static async logout(){
+        return api.delete("api/auth/logout")
+    }
 }

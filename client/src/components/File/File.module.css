@@ -1,4 +1,5 @@
 .File {
+    height: 60px;
     padding: 10px 0;
     border-bottom: solid 2px rgba(120, 116, 116, 0.5);
     display: grid;

@@ -6,16 +6,18 @@ import Logo from "../../assets/images/google_logo.svg"
 import avatar from "../../assets/images/avatar_def.svg"
 import Search from "../Search/Search"
 import { logout } from "../../store/userSlice"
+import AuthService from "../../services/AuthService"
 
 const Navbar = () => {
     const dispatch = useDispatch()
     const isAuth = useSelector(state => state.user.isAuth)
     const user = useSelector(state => state.user.currentUser)
     
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        localStorage.removeItem("token")
+        await AuthService.logout()
         dispatch(logout())
     }
-    
     return (
         <div className={styles.navbar}>
             <div className={styles.navbar_logo}>

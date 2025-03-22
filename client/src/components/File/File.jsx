@@ -14,7 +14,7 @@ import FileView from "../../pages/FileView/FileView"
 import useFileActions from "../../hooks/useFileActions"
 
 const File = ({ file, isSelected }) => {
-    const { name, date, size, type, path, extension, _id: fileId } = file
+    const { name, date, size, type, extension, _id: fileId } = file
     const Logo = getLogo("component", extension, type) //component
     
     const dispatch = useDispatch()
@@ -47,11 +47,15 @@ const File = ({ file, isSelected }) => {
             }
         }
     }
-
+    
     return (
         <>
             {fileView === "list" ? (
-                <div className={`${styles.File} ${type !== "dir" && styles.File_list_file} ${isSelected && styles.selected}`} data-file-id={fileId} onClick={openDirHandler}>
+                <div
+                    className={`${styles.File} ${type !== "dir" && styles.File_list_file} ${isSelected && styles.selected}`}
+                    data-file-id={fileId}
+                    onClick={openDirHandler}
+                >
                     <Logo className={styles.File_list_img} />
                     <div className={styles.File_list_name}>{name}</div>
                     <div className={styles.File_list_date}>{date.slice(0, 10)}</div>
@@ -66,7 +70,11 @@ const File = ({ file, isSelected }) => {
                     <Button className={styles.File_list_btn} onClick={deleteHandler}><img src={deleteLogo} /></Button>
                 </div>
             ) : (
-                <div className={`${styles.File_plate} ${isSelected && styles.selected}`} data-file-id={fileId} onClick={openDirHandler}>
+                <div
+                    className={`${styles.File_plate} ${isSelected && styles.selected}`}
+                    data-file-id={fileId}
+                    onClick={openDirHandler}
+                >
                     <Logo className={styles.File_plate_img} />
                     <div className={styles.File_plate_name}>{name}</div>
                     <div className={styles.File_plate_info_card}>
