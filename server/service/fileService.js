@@ -2,17 +2,18 @@ const fs = require("fs")
 const { fileModel } = require("../entities/fileModel")
 const { createFolder } = require("../utils/createFolder")
 const { userModel } = require("../entities/userModel")
-const { FileError } = require("../exceptions/fileError")
 const { deleteLocalFile, deleteLocalFolder } = require("../utils/deleteContent")
 const { createPath } = require("../utils/createPath")
 const path = require("path")
 const { archiveDirectory } = require("../utils/archiveDirectory")
+const { FileError } = require("../exceptions/fileError")
+const { archiveMultiple } = require("../utils/archiveMultiple")
 
 class FileService {
     async createDir (user, name, type, parent) {
         const existsFile = await fileModel.exists({ name, parent, type, user: user.id })
         if (!existsFile) {
-            const file = await new fileModel({ name, type, parent, user: user.id })
+            const file = new fileModel({ name, type, parent, user: user.id })
             const parentFile = await fileModel.findOne({ _id: parent })
             if (!parentFile) {
                 file.path = name
@@ -26,7 +27,7 @@ class FileService {
             await file.save()
             return file
         }
-        return existsFile
+        throw FileError.FileAlreadyExistsError()
     }
     
     async getFiles (sort, order, user, parent, viewType) {
@@ -60,7 +61,7 @@ class FileService {
         const userDB = await userModel.findOne({ _id: user.id })
         
         if (userDB.usedSpace + file.size > user.diskSpace) {
-            throw new FileError.InsufficientDiskSpaceError()
+            throw FileError.InsufficientDiskSpaceError()
         }
         
         // создать вложенные папки если есть webkitRelativePath
@@ -78,7 +79,7 @@ class FileService {
         const fullPath = createPath(user, parent, file)
         
         if (fs.existsSync(fullPath)) {
-            throw new FileError.FileAlreadyExistsError()
+            throw FileError.FileAlreadyExistsError()
         }
         
         // если идет аплоуд файла то его обрабатываем
@@ -110,30 +111,30 @@ class FileService {
     
     async downloadFile (userId, fileId) {
         if (!userId || !fileId) {
-            throw new FileError.InvalidFileRequest("Отсутствуют id user или file")
+            throw FileError.InvalidFileRequest("Отсутствуют id user или file")
         }
         const file = await fileModel.findOne({ user: userId, _id: fileId })
         const path = `${process.env.FILES_DIR_PATH}\\${userId}\\${file.path}`
         if (fs.existsSync(path)) {
             return path
         }
-        throw new FileError.FileNotFoundError()
+        throw FileError.FileNotFoundError()
     }
     
     async downloadDirectory (userId, fileId) {
         if (!userId || !fileId) {
-            throw new FileError.InvalidFileRequest("Отсутствуют id user или file")
+            throw FileError.InvalidFileRequest("Отсутствуют id user или file")
         }
         const file = await fileModel.findOne({ user: userId, _id: fileId })
         if (!file) {
-            throw new FileError.FileNotFoundError()
+            throw FileError.FileNotFoundError()
         }
         const directoryPath = path.join(process.env.FILES_DIR_PATH, userId, file.path)
         if (!fs.existsSync(directoryPath)) {
-            throw new FileError.FileNotFoundError()
+            throw FileError.FileNotFoundError()
         }
         const zipFileName = `tmp_${fileId}.zip`
-        const zipFilePath = path.join(process.env.FILES_DIR_PATH, userId, zipFileName);
+        const zipFilePath = path.join(process.env.FILES_DIR_PATH, userId, zipFileName)
         
         await archiveDirectory(directoryPath, zipFilePath)
         
@@ -146,7 +147,7 @@ class FileService {
         const filePath = `${process.env.FILES_DIR_PATH}\\${userId}\\${file.path}`
         console.log(filePath)
         if (!file) {
-            throw new FileError.FileNotFoundError()
+            throw FileError.FileNotFoundError()
         }
         if (file.type === "dir") {
             const childFiles = await fileModel.find({ parent: file._id })
@@ -165,6 +166,23 @@ class FileService {
         return "lol"
     }
     
+    async downloadMultiple (userId, files) {
+        if (!Array.isArray(files)) {
+            throw new Error("Неверный формат параметра files, должен быть массивом")
+        }
+        
+        const foundFiles = await fileModel.find({ user: userId, _id: { $in: files } })
+        if (!foundFiles.length) {
+            throw new Error("Файлы не найдены")
+        }
+        
+        const zipFileName = `multiple_${Date.now()}.zip`
+        const userDir = path.join(process.env.FILES_DIR_PATH, userId)
+        const zipFilePath = path.join(userDir, zipFileName)
+        
+        return await archiveMultiple(foundFiles, zipFilePath, userId)
+    }
+    
     async searchFiles (searchName, userId) {
         let files = await fileModel.find({ user: userId })
         files = files.filter(file => (file.name.toLowerCase()).includes(searchName.toLowerCase()))
@@ -173,15 +191,15 @@ class FileService {
     
     async getFile (fileId, userId, user) {
         if (user.id !== userId) {
-            throw new FileError.FilePermissionError()
+            throw FileError.FilePermissionError()
         }
         const file = await fileModel.findById(fileId)
         if (!file) {
-            throw new FileError.FileNotFoundError("Файл или папка не найдены в БД")
+            throw FileError.FileNotFoundError("Файл или папка не найдены в БД")
         }
         const filePath = `${process.env.FILES_DIR_PATH}\\${user.id}\\${file.path}`
         if (!fs.existsSync(filePath)) {
-            throw new FileError.FileNotFoundError("Файл не найден на сервере")
+            throw FileError.FileNotFoundError("Файл не найден на сервере")
         }
         return filePath
     }

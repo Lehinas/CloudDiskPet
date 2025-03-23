@@ -3,6 +3,11 @@ import styles from "./FileList.module.css"
 import { useDispatch, useSelector } from "react-redux"
 import File from "../File/File"
 import { changeSortName } from "../../store/fileSlice"
+import { ReactComponent as CrossLogo } from "../../assets/images/cross.svg"
+import { ReactComponent as ShareLogo } from "../../assets/images/share.svg"
+import { ReactComponent as DownloadLogo } from "../../assets/images/download.svg"
+import { ReactComponent as DeleteLogo } from "../../assets/images/delete.svg"
+import useFileActions from "../../hooks/useFileActions"
 
 const FileList = () => {
     const dispatch = useDispatch()
@@ -12,6 +17,8 @@ const FileList = () => {
     const [selectionBox, setSelectionBox] = useState(null)
     const [selectedFiles, setSelectedFiles] = useState([])
     
+    const { deleteSelectedHandler, downloadSelectedHandler } = useFileActions()
+    
     useEffect(() => {}, [fileView])
     
     const changeSort = (value) => {
@@ -19,7 +26,16 @@ const FileList = () => {
     }
     
     const handleMouseDown = (e) => {
-        setSelectedFiles([])
+        const fileElement = e.target.closest("[data-file-id]")
+        if (fileElement) {
+            const id = fileElement.getAttribute("data-file-id")
+            if (selectedFiles.includes(id)) {
+                return
+            }
+        }
+        if (!e.ctrlKey) {
+            setSelectedFiles([])
+        }
         const rect = containerRef.current.getBoundingClientRect()
         const scrollLeft = containerRef.current.scrollLeft
         const scrollTop = containerRef.current.scrollTop
@@ -85,6 +101,15 @@ const FileList = () => {
     const handleMouseUp = (e) => {
         setSelectionBox(null)
     }
+    const handleSelection = (id, add) => {
+        if (add) {
+            setSelectedFiles(prev =>
+                prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id],
+            )
+        } else {
+            setSelectedFiles([id])
+        }
+    }
     
     return (
         <>
@@ -92,10 +117,25 @@ const FileList = () => {
                 <div
                     className={styles.FileList}
                     ref={containerRef}
-                    // onMouseDown={handleMouseDown}
-                    // onMouseUp={handleMouseUp}
-                    // onMouseMove={handleMouseMove}
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={handleMouseUp}
+                    onMouseMove={handleMouseMove}
                 >
+                    {selectedFiles.length > 0 && (
+                        <div
+                            className={styles.selectionBar}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button onClick={() => setSelectedFiles([])}>
+                                <CrossLogo className={styles.selectionBar_cross} /></button>
+                            <span>Выбрано: {selectedFiles.length}</span>
+                            <button onClick={() => downloadSelectedHandler(selectedFiles)}><DownloadLogo /></button>
+                            <button onClick={() => shareHandler(selectedFiles)}><ShareLogo /></button>
+                            <button onClick={() => deleteSelectedHandler(selectedFiles)}><DeleteLogo /></button>
+                        </div>
+                    )}
+                    
                     <div className={styles.FileList_header} onMouseDown={e => e.stopPropagation()}>
                         <div className={styles.FileList_name} onClick={() => changeSort("name")}>Название</div>
                         <div className={styles.FileList_date} onClick={() => changeSort("date")}>Дата</div>
@@ -107,6 +147,7 @@ const FileList = () => {
                                 key={file._id}
                                 file={file}
                                 isSelected={selectedFiles.includes(file._id)}
+                                handleSelection={handleSelection}
                             />
                         ))
                     ) : (

@@ -14,7 +14,6 @@ export default class FileService {
     }
     
     static async createDir (dirId, name) {
-        console.log(typeof dirId)
         return api.post("api/files/", { name, type: "dir", parent: dirId })
     }
     
@@ -36,11 +35,12 @@ export default class FileService {
         })
     }
     
-    static async downloadFile (userId, fileId, type) {
+    static async downloadFile (userId, fileId,files, type) {
         return api.get("api/files/download", {
             params: {
                 userId,
                 fileId,
+                files,
                 type
             },
             responseType: "blob",

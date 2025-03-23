@@ -86,3 +86,46 @@
     text-align: center;
     padding-top: 50px;
 }
+
+.selectionBar {
+    background-color: #cdd9e3;
+    border-radius: 24px;
+    padding: 5px 15px;
+    display: flex;
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 20px;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.selectionBar button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 100px;
+}
+
+.selectionBar button:hover {
+    background-color: rgba(196, 199, 197, .5)
+
+}
+
+.selectionBar_cross {
+    width: 20px;
+    height: 20px;
+    padding: 5px;
+
+}
+
+.selectionBar span {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}

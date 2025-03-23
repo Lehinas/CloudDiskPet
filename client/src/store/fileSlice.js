@@ -6,12 +6,13 @@ const initialState = {
     currentFolder: "Мой диск",
     folderStack: [{
         name: "Мой диск",
-        id: null
+        id: null,
     }],
     sortName: "date",
     sortType: "inc",
     fileView: "list",
-    viewType: ""
+    viewType: "",
+    selectedFiles: [],
 }
 
 export const fileSlice = createSlice({
@@ -36,9 +37,6 @@ export const fileSlice = createSlice({
         setFolderStack: (state, action) => {
             state.folderStack = action.payload
         },
-        popFromFolderStack: (state, action) => {
-            state.folderStack.pop()
-        },
         changeSortName: (state, action) => {
             state.sortName = action.payload
         },
@@ -50,7 +48,10 @@ export const fileSlice = createSlice({
         },
         setViewType: (state, action) => {
             state.viewType = action.payload
-        }
+        },
+        addSelectedFile: (state, action) => {
+            state.selectedFiles.push(action.payload)
+        },
     },
 })
 
@@ -65,6 +66,7 @@ export const {
     setCurrentFolder,
     setFolderStack,
     setViewType,
+    addSelectedFile,
 } = fileSlice.actions
 
 export const fileReducer = fileSlice.reducer

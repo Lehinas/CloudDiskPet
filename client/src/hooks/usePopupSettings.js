@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 const usePopupSettings = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -23,7 +23,7 @@ const usePopupSettings = () => {
     return {
         isOpen,
         popupRef,
-        togglePopup
+        togglePopup,
     }
 }
 

@@ -1,5 +1,6 @@
 const { fileService } = require("../service/fileService")
 const fs = require("fs")
+const { removeTempArchive } = require("../utils/removeTempArchive")
 
 class FileController {
     async createDir (req, res, next) {
@@ -37,28 +38,26 @@ class FileController {
         }
     }
     
-    async downloadFile (req, res, next) {
+    async download (req, res, next) {
         try {
-            const { userId, fileId, type } = req.query
+            const { userId, fileId, type, files } = req.query
             
-            if (type !== "dir") {
-                const filePath = await fileService.downloadFile(userId, fileId)
-                return res.download(filePath)
-            }
-            
-            const zipFilePath = await fileService.downloadDirectory(userId, fileId)
-            
-            res.download(zipFilePath, (err) => {
-                if (!err) {
-                    fs.unlink(zipFilePath, (unlinkErr) => {
-                        if (unlinkErr) {
-                            console.error("Ошибка при удалении архива:", unlinkErr)
-                        }
-                    })
-                } else {
-                    console.error("Ошибка при скачивании архива:", err)
+            switch (type) {
+                case "dir": {
+                    const zipFilePath = await fileService.downloadDirectory(userId, fileId)
+                    return res.download(zipFilePath, "files.zip", removeTempArchive(zipFilePath))
                 }
-            })
+                
+                case "multiple": {
+                    const zipFilePath = await fileService.downloadMultiple(userId, files)
+                    return res.download(zipFilePath, "files.zip", removeTempArchive(zipFilePath))
+                }
+                
+                default: {
+                    const filePath = await fileService.downloadFile(userId, fileId)
+                    return res.download(filePath)
+                }
+            }
         } catch (e) {
             next(e)
         }
