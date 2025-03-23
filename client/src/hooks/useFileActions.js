@@ -11,7 +11,7 @@ const useFileActions = (file) => {
     const downloadHandler = async (e) => {
         e.stopPropagation()
         try {
-            const { data } = await FileService.downloadFile(user.id, file._id, file.type)
+            const { data } = await FileService.downloadFile(user.id, file._id, [] , file.type)
             const downloadUrl = window.URL.createObjectURL(data)
             const link = document.createElement("a")
             link.href = downloadUrl
