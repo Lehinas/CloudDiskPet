@@ -50,7 +50,7 @@ class FileController {
                 
                 case "multiple": {
                     const zipFilePath = await fileService.downloadMultiple(userId, files)
-                    return res.download(zipFilePath, "files.zip", removeTempArchive(zipFilePath))
+                    return res.download(zipFilePath, "files.zip")
                 }
                 
                 default: {
