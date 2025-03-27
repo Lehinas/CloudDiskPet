@@ -1,30 +1,29 @@
 const fs = require("fs")
 const { fileModel } = require("../entities/fileModel")
-const { createFolder } = require("../utils/createFolder")
 const { userModel } = require("../entities/userModel")
-const { deleteLocalFile, deleteLocalFolder } = require("../utils/deleteContent")
-const { createPath } = require("../utils/createPath")
 const path = require("path")
-const { archiveDirectory } = require("../utils/archiveDirectory")
 const { FileError } = require("../exceptions/fileError")
 const { archiveMultiple } = require("../utils/archiveMultiple")
+const { awsService } = require("./awsService")
 
 class FileService {
     async createDir (user, name, type, parent) {
         const existsFile = await fileModel.exists({ name, parent, type, user: user.id })
         if (!existsFile) {
             const file = new fileModel({ name, type, parent, user: user.id })
-            const parentFile = await fileModel.findOne({ _id: parent })
+            const parentFile = parent ? await fileModel.findOne({ _id: parent }) : null
+            
             if (!parentFile) {
-                file.path = name
-                await createFolder(file)
+                file.path = `${user.id}/${name}`
             } else {
-                file.path = `${parentFile.path}\\${file.name}`
-                await createFolder(file)
+                file.path = `${parentFile.path}/${name}`
                 parentFile.childs.push(file._id)
                 await parentFile.save()
             }
+            
+            await awsService.createFolder(file.path)
             await file.save()
+            
             return file
         }
         throw FileError.FileAlreadyExistsError()
@@ -36,9 +35,7 @@ class FileService {
         let sortOrder = order === "inc" ? 1 : -1
         
         const filter = {
-            user,
-            parent,
-            ...(type ? { type } : {}),
+            user, parent, ...(type ? { type } : {}),
         }
         
         switch (sort) {
@@ -64,123 +61,123 @@ class FileService {
             throw FileError.InsufficientDiskSpaceError()
         }
         
-        // создать вложенные папки если есть webkitRelativePath
+        // Создать вложенные папки, если есть webkitRelativePath
         if (webkitRelativePath) {
             const folders = path.dirname(webkitRelativePath).split("/")
             for (const folder of folders) {
-                const response = await this.createDir(user, folder, "dir", parentId)
-                parentId = response._id
+                const file = await this.createDir(user, folder, "dir", parentId)
+                parentId = file._id
             }
         }
         
         const parent = parentId ? await fileModel.findOne({ user: user.id, _id: parentId }) : null
+        const filePath = parent ? `${parent.path}/${file.name}` : `${user.id}/${file.name}`
         
-        const filePath = parent ? `${parent.path}\\${file.name}` : file.name
-        const fullPath = createPath(user, parent, file)
+        await awsService.uploadFile(file.data, filePath)
         
-        if (fs.existsSync(fullPath)) {
-            throw FileError.FileAlreadyExistsError()
-        }
+        const type = file.mimetype.split("/")[0]
+        const extension = file.name.split(".").pop()
         
-        // если идет аплоуд файла то его обрабатываем
-        if (file.mimetype) {
-            await file.mv(fullPath)
-            userDB.usedSpace += file.size
-            
-            const type = file.mimetype.split("/")[0]
-            const extension = file.name.split(".").pop()
-            
-            const dbFile = new fileModel({
-                name: file.name,
-                type,
-                extension,
-                size: file.size,
-                path: filePath,
-                parent: parent ? parent._id : null,
-                user: user.id,
-            })
-            
-            await dbFile.save()
-            await userDB.save()
-            
-        }
+        const dbFile = new fileModel({
+            name: file.name,
+            type,
+            extension,
+            size: file.size,
+            path: filePath,
+            parent: parent ? parent._id : null,
+            user: user.id,
+        })
         
-        // возвращаем что все гуд
-        return true
+        await dbFile.save()
+        userDB.usedSpace += file.size
+        await userDB.save()
+        
+        return dbFile
     }
     
     async downloadFile (userId, fileId) {
         if (!userId || !fileId) {
             throw FileError.InvalidFileRequest("Отсутствуют id user или file")
         }
+        
         const file = await fileModel.findOne({ user: userId, _id: fileId })
-        const path = `${process.env.FILES_DIR_PATH}\\${userId}\\${file.path}`
-        if (fs.existsSync(path)) {
-            return path
+        if (!file) {
+            throw FileError.FileNotFoundError()
         }
-        throw FileError.FileNotFoundError()
+        return awsService.getSignedUrl(file.path, 60)
     }
     
     async downloadDirectory (userId, fileId) {
         if (!userId || !fileId) {
             throw FileError.InvalidFileRequest("Отсутствуют id user или file")
         }
-        const file = await fileModel.findOne({ user: userId, _id: fileId })
-        if (!file) {
+        
+        const folder = await fileModel.findOne({ user: userId, _id: fileId })
+        if (!folder) {
             throw FileError.FileNotFoundError()
         }
-        const directoryPath = path.join(process.env.FILES_DIR_PATH, userId, file.path)
-        if (!fs.existsSync(directoryPath)) {
-            throw FileError.FileNotFoundError()
+        if (folder.type !== "dir") {
+            throw FileError.InvalidFileTypeError("Указанный файл не является директорией")
         }
-        const zipFileName = `tmp_${fileId}.zip`
-        const zipFilePath = path.join(process.env.FILES_DIR_PATH, userId, zipFileName)
         
-        await archiveDirectory(directoryPath, zipFilePath)
-        
-        return zipFilePath
+        return await awsService.processDirectoryForDownload(userId, folder.path)
     }
     
     async deleteFiles (userId, fileId) {
         const user = await userModel.findOne({ _id: userId })
         const file = await fileModel.findOne({ user: userId, _id: fileId })
-        const filePath = `${process.env.FILES_DIR_PATH}\\${userId}\\${file.path}`
-        console.log(filePath)
         if (!file) {
             throw FileError.FileNotFoundError()
         }
+        
         if (file.type === "dir") {
             const childFiles = await fileModel.find({ parent: file._id })
             for (const childFile of childFiles) {
                 await this.deleteFiles(userId, childFile._id)
             }
-            // произошла пробежка по всем приколам
-            await deleteLocalFolder(filePath)
-            
+            // Удаляем "папку" на aws s3
+            await awsService.deleteFolder(file.path)
         } else {
-            await deleteLocalFile(filePath)
+            // Удаляем файл на awss3
+            await awsService.deleteFile(file.path)
         }
+        
+        if (file.parent) {
+            const parentFile = await fileModel.findOne({ _id: file.parent })
+            if (parentFile) {
+                parentFile.childs = parentFile.childs.filter(childId => childId.toString() !== file._id.toString())
+                await parentFile.save()
+            }
+        }
+        
         await fileModel.findByIdAndDelete(file._id)
+        
         user.size = user.size + file.size
-        user.save()
-        return "lol"
+        await user.save()
+        
+        return true
     }
     
     async downloadMultiple (userId, files) {
         if (!Array.isArray(files)) {
-            throw new Error("Неверный формат параметра files, должен быть массивом")
+            throw FileError.InvalidFileRequest("Неверный формат параметра files, должен быть массивом")
         }
         
         const foundFiles = await fileModel.find({ user: userId, _id: { $in: files } })
         if (!foundFiles.length) {
-            throw new Error("Файлы не найдены")
+            throw FileError.FileNotFoundError("Файлы не найдены")
         }
         
-        const zipFileName = `multiple_${Date.now()}.zip`
-        const userDir = path.join(process.env.FILES_DIR_PATH, userId)
-        const zipFilePath = path.join(userDir, zipFileName)
+        const archiveS3Path = await archiveMultiple(userId, foundFiles)
         
-        return await archiveMultiple(foundFiles, zipFilePath, userId)
+        const signedUrl = await awsService.getSignedUrl(archiveS3Path, 60)
+        
+        setTimeout(() => {
+            awsService.deleteFile(archiveS3Path)
+            .catch(err => console.error("Ошибка при удалении архива:", err))
+        }, 60000)
+        
+        return signedUrl
     }
     
     async searchFiles (searchName, userId) {

@@ -44,18 +44,18 @@ class FileController {
             
             switch (type) {
                 case "dir": {
-                    const zipFilePath = await fileService.downloadDirectory(userId, fileId)
-                    return res.download(zipFilePath, "files.zip", removeTempArchive(zipFilePath))
+                    const url = await fileService.downloadDirectory(userId, fileId)
+                    return res.json(url)
                 }
                 
                 case "multiple": {
-                    const zipFilePath = await fileService.downloadMultiple(userId, files)
-                    return res.download(zipFilePath, "files.zip", removeTempArchive(zipFilePath))
+                    const url = await fileService.downloadMultiple(userId, files)
+                    return res.json(url)
                 }
                 
                 default: {
-                    const filePath = await fileService.downloadFile(userId, fileId)
-                    return res.download(filePath)
+                    const signedUrl = await fileService.downloadFile(userId, fileId)
+                    return res.json(signedUrl)
                 }
             }
         } catch (e) {

@@ -1,20 +1,36 @@
-const fs = require("fs")
 const archiver = require("archiver")
+const { PassThrough } = require("stream")
 
-function archiveDirectory (sourceDir, zipFilePath) {
-    return new Promise((resolve, reject) => {
-        const output = fs.createWriteStream(zipFilePath)
-        const archive = archiver("zip", { zlib: { level: 9 } })
+async function archiveDirectory (userId, s3Files, s3FolderPrefix, folderName, uploadFileToS3, awsService) {
+    const archive = archiver("zip", { zlib: { level: 9 } })
+    const archiveStream = new PassThrough()
+    
+    const archiveName = `tmp_${folderName}_${Date.now()}.zip`
+    const archiveS3Path = `${userId}/temp/${archiveName}`
+    
+    const uploadPromise = uploadFileToS3(archiveStream, archiveS3Path)
+    
+    archive.pipe(archiveStream)
+    
+    await Promise.all(s3Files.map(async (fileObj) => {
+        const s3Key = fileObj.Key
         
-        output.on("close", () => resolve())
-        archive.on("error", (err) => reject(err))
+        if (s3Key === s3FolderPrefix || !s3Key.startsWith(s3FolderPrefix)) {
+            return
+        }
         
-        archive.pipe(output)
-        archive.directory(sourceDir, false)
-        archive.finalize()
-    })
+        const relativePath = `${folderName}/${s3Key.substring(s3FolderPrefix.length)}`
+        
+        const fileStream = await awsService.downloadFileStream(s3Key)
+        
+        archive.append(fileStream, { name: relativePath })
+    }))
+    
+    await archive.finalize()
+    
+    await uploadPromise
+    
+    return archiveS3Path
 }
 
-module.exports = {
-    archiveDirectory
-}
+module.exports = { archiveDirectory }

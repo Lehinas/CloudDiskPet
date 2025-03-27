@@ -11,14 +11,9 @@ const useFileActions = (file) => {
     const downloadHandler = async (e) => {
         e.stopPropagation()
         try {
-            const { data } = await FileService.downloadFile(user.id, file._id, [] , file.type)
-            const downloadUrl = window.URL.createObjectURL(data)
-            const link = document.createElement("a")
-            link.href = downloadUrl
-            link.download = file.name
-            document.body.appendChild(link)
-            link.click()
-            link.remove()
+            const { data } = await FileService.downloadFile(user.id, file._id, [], file.type)
+            console.log("data", data)
+            window.location.href = data
         } catch (e) {
             console.log(e)
         }
@@ -58,13 +53,7 @@ const useFileActions = (file) => {
     const downloadSelectedHandler = async (selectedFiles) => {
         try {
             const { data } = await FileService.downloadFile(user.id, "", selectedFiles, "multiple")
-            const downloadUrl = window.URL.createObjectURL(data)
-            const link = document.createElement("a")
-            link.href = downloadUrl
-            link.download = "files.zip"
-            document.body.appendChild(link)
-            link.click()
-            link.remove()
+            window.location.href = data
         } catch (e) {
             console.log(e)
         }
